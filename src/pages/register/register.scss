@@ -1,4 +1,4 @@
-.login {
+.register {
     height: 100vh;
     background-color: rgb(193, 190, 255);
     display: flex;
@@ -8,6 +8,7 @@
     .card {
         background-color: white;
         display: flex;
+        flex-direction: row-reverse;
         width: 50%;
         border-radius: 10px;
         min-height: 600px;
@@ -16,7 +17,8 @@
 
         .left {
             flex: 1;
-            background-image: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)), url("https://cdn.elearningindustry.com/wp-content/uploads/2018/08/how-human-interaction-increases-learner-success-e1533812679238.jpg");
+            background-image: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)), url("https://a1cf74336522e87f135f-2f21ace9a6cf0052456644b80fa06d4f.ssl.cf2.rackcdn.com/images/characters/large/2800/Hades.Hercules.webp");
+            background-position: center;
             background-size: cover;
             padding: 50px;
             display: flex;
