@@ -1,6 +1,8 @@
 //import React from 'react'
+import { useQuery } from '@tanstack/react-query';
 import Post from '../post/Post';
 import './posts.scss'
+import { makeRequest } from '../../axios';
 
 //temp
 const examplePosts = [
@@ -85,7 +87,11 @@ const examplePosts = [
 
 const Posts = ({ posts = examplePosts }) => {
 
-
+    // const { isLoading, error, data } = useQuery(['posts'], () => {
+    //     makeRequest.get('/posts').then((res) => {
+    //         return res.data;
+    //     })
+    // });
 
     return (
         <div className='posts'>

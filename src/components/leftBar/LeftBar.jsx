@@ -1,14 +1,17 @@
 //import React from 'react'
+import { useContext } from "react"
 import "./leftbar.scss"
+import { AuthContext } from "../../context/authContext"
 
 const LeftBar = () => {
+    const { currentUser } = useContext(AuthContext);
     return (
         <div className="leftBar">
             <div className="container">
                 <div className="menu">
                     <div className="user">
                         <img src="" alt="" />
-                        <span>John Doe</span>
+                        <span>{currentUser.username}</span>
                     </div>
                     <div className="item">
                         <img src="" alt="" />
