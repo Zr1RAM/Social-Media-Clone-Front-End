@@ -17,10 +17,11 @@ import {
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import './styles/app.scss';
 
 function App() {
-  document.title = 'Social Media Clone'
+  //document.title = 'Social Media Clone'
 
   const { currentUser } = useContext(AuthContext);
 
@@ -84,7 +85,7 @@ function App() {
 
   ]);
 
-  return <div>
+  return <div className="main-bg">
     <RouterProvider router={router} />
   </div>;
 }

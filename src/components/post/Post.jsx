@@ -8,14 +8,102 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import Comments from "../comments/Comments";
+import moment from "moment";
+import { AuthContext } from "../../context/authContext";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { makeRequest } from "../../axios";
+
+const baseURL = 'http://localhost:8800/uploads/';
 
 const Post = ({ post }) => {
+    const { currentUser } = useContext(AuthContext);
     const [toggleComments, setToggleComments] = useState(false);
-    const { name, profilePic, img, desc, userId } = post;
-    const [coverFit, setCoverFit] = useState(true);
-    const liked = false;
+    const { name, profile_pic: profilePic, img, desc, userid, created_at, id, comment_count, liked_users } = post;
+    //console.log(userid);
+    const [isCoverFit, setIsCoverFit] = useState(true); 
+
+    const [imageSrc, setImageSrc] = useState("");
+
+    const [liked, setLiked] = useState(false); 
+
+    const queryClient = useQueryClient();
+
+    // let likeCount = 0, commentCount = 0;
+
+    // const { isLoading, error, data } = useQuery({
+    //     queryKey: ['post', id],
+    //     queryFn: () => makeRequest.get('/posts/' + id).then((res) => {
+    //         console.log(res.data);
+    //         return res.data;
+    //     }),
+    //   });
+
+    const mutation = useMutation(
+        () => {
+            if(liked) {
+                //console.log('executing unlike');
+                // likeCount -= 1;
+                return makeRequest.delete("/likes?postId=" + id);
+            } else {
+                //console.log("executing like");
+                // likeCount += 1;
+                return makeRequest.post("/likes", {postId: id});
+            }
+        },
+        {
+            onSuccess: () => {
+                
+                //queryClient.invalidateQueries(['posts']);
+                //queryClient.invalidateQueries(['post', id]);
+            },
+        }
+    );
+
+    const handleLikes = () => {
+        mutation.mutate();
+        setLiked(!liked);
+    }
+
+    
+
+    useEffect(() => {
+        // const fetchImage = async () => {
+        //     try {
+        //         const response = await fetch(baseURL + img);
+        //         const blob = await response.blob();
+        //         const url = URL.createObjectURL(blob);
+        //         setImageSrc(url);
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // }
+        // likeCount = liked_users.length;
+        
+        if(liked_users?.includes(currentUser.id)) {
+            setLiked(true);
+        } 
+        // else {
+        //     setLiked(false);
+        // }
+        
+        
+
+        if(img != null && !img.includes('https://')) {
+            //fetchImage();
+            setImageSrc(baseURL + img)
+        } else {
+            setImageSrc(img);
+        }
+
+        //console.log(imageSrc);
+
+        
+        
+
+    }, []);
+    
     return (
         <div className="post">
             <div className="container">
@@ -23,44 +111,45 @@ const Post = ({ post }) => {
                     <div className="userInfo">
                         <img src={profilePic} alt="" />
                         <div className="details">
-                            <Link to={`/profile/${userId}`} style={{ textDecoration: "none", color: "inherit" }}>
+                            <Link to={`/profile/${userid}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 <span className="name">{name}</span>
                             </Link>
-                            <span className="date">1 min ago</span>
+                            <span className="date">{moment(created_at).fromNow()}</span>
                         </div>
                     </div>
                     <MoreHorizIcon />
                 </div>
                 <div className="content">
                     <p>{desc}</p>
-                    {img &&
-                        <img src={img} alt=""
-                            style={{ objectFit: coverFit ? 'cover' : 'contain' }}
+                    {imageSrc !== null &&
+                        <img src={imageSrc} alt=""
+                            style={{ objectFit: isCoverFit ? 'cover' : 'contain' }}
                             onClick={
                                 () => {
-                                    setCoverFit(!coverFit);
+                                    setIsCoverFit(!isCoverFit);
                                 }
                             }
                         />}
                 </div>
                 <div className="info">
-                    <div className="item">
-                        {liked ? <FavoriteoutlinedIcon /> : <FavoriteBorderoutlinedIcon />}
-                        Like
+                    <div className="item" onClick={handleLikes}>
+                        {liked ? <FavoriteoutlinedIcon style={{color: 'red'}}/> : <FavoriteBorderoutlinedIcon />}
+                        {/* { likeCount + " Likes"} */}
+                        { (liked_users? liked_users.length : "0") + " Likes"}
                     </div>
                     <div className="item" onClick={() => setToggleComments(!toggleComments)}>
                         <TextsmsOutlinedIcon />
-                        Comment
+                        { comment_count + " Comments"}
                     </div>
                     <div className="item">
                         <ShareOutlinedIcon />
                         Share
                     </div>
                 </div>
-                {toggleComments && <Comments />}
+                {toggleComments && <Comments postId={id}/>}
             </div>
         </div>
     )
 }
 
-export default Post
+export default memo(Post);

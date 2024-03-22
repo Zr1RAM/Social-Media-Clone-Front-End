@@ -1,0 +1,6 @@
+@import './style.scss';
+.main-bg {
+    @include themify() {
+    background-color: themed("bgSoft");
+    }
+}

@@ -12,6 +12,12 @@ import LanguageIcon from "@mui/icons-material/Language";
 import EmailoutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
+import { useLocation } from "react-router-dom";
+import { useQuery } from "react-query";
+import { makeRequest } from "../../axios";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/authContext";
+import UpdateModal from "../../components/modal/UpdateModal";
 
 //temp
 const hadesPosts = [
@@ -48,16 +54,44 @@ const hadesPosts = [
 ];
 
 const Profile = () => {
+
+    const [openUpdate, setOpenUpdate] = useState(false);
+
+    const userId = useLocation().pathname.split("/")[2];
+    const { currentUser } = useContext(AuthContext);
+    //console.log(userId);
+
+    const { isLoading, error, data } = useQuery({
+        queryKey: ['user'],
+        queryFn: () => makeRequest.get('/users/find/' + userId).then((res) => {
+            return res.data;
+        }),
+      });
+
+      console.log('user profile data: ');
+      console.log(data);
+      const handleRelationshipStatus = () => {
+            if(currentUser.id == userId) {
+                console.log("open modal");
+                setOpenUpdate(true);
+            }
+      }
+
     return (
         <div className="profile">
+            {error ? (
+                <div style={{color: 'red'}}>{error}</div>
+            ) : isLoading ? (
+                <div><span>loading...</span></div>
+            ) : ( <>
             <div className="images">
                 <img
-                    src="https://i.pinimg.com/originals/e7/53/06/e7530699a520524c993e33a0221d19d5.png"
+                    src={data?.cover_pic}
                     alt=""
                     className="cover"
                 />
                 <img
-                    src="https://a1cf74336522e87f135f-2f21ace9a6cf0052456644b80fa06d4f.ssl.cf2.rackcdn.com/images/characters/large/2800/Hades.Hercules.webp"
+                    src={data?.profile_pic}
                     alt=""
                     className="profilePic"
                 />
@@ -82,11 +116,11 @@ const Profile = () => {
                         </a>
                     </div>
                     <div className="center">
-                        <span>Hades</span>
+                        <span>{data?.name}</span>
                         <div className="info">
                             <div className="item">
                                 <PlaceIcon />
-                                <span>After Life</span>
+                                <span>{data?.city}</span>
                             </div>
                             <div className="item">
                                 <LanguageIcon />
@@ -94,12 +128,17 @@ const Profile = () => {
                                     <a
                                         href="https://64.media.tumblr.com/a5f1b73d1f74b0b57821a8cd637a7cc7/4f8d7bb98e539b31-dc/s1280x1920/07a87d82ba20e810a516d63b7f7b824b63a740e7.gifv"
                                     >
-                                        linkedin.disney/hades
+                                        {data?.website}
                                     </a>
                                 </span>
                             </div>
                         </div>
-                        <button>Follow</button>
+                        <button onClick={handleRelationshipStatus}>
+                            { currentUser.id == userId ? 
+                                "Update" : 
+                                data?.relationship_status !== null ? 
+                                "Unfollow" : "Follow"}
+                        </button>
                     </div>
                     <div className="right">
                         <EmailoutlinedIcon />
@@ -107,9 +146,13 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-            <div className="userPosts">
-                <Posts posts={hadesPosts} />
-            </div>
+            {data.posts &&
+                <div className="userPosts">
+                    <Posts posts={data?.posts} />
+                </div>
+            }
+            </>)}
+            {openUpdate && <UpdateModal setOpenUpdate = {setOpenUpdate}/>}
         </div>
     )
 }

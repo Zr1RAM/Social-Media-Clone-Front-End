@@ -14,8 +14,8 @@ export const AuthContextProvider = ({ children }) => {
             withCredentials: true,
         });
         console.log(res.status == 200 ? 'login successful' : 'login failed');
-        const { id, username, name } = await res.data;
-        setCurrentUser({ id, username, profilePic: "https://a1cf74336522e87f135f-2f21ace9a6cf0052456644b80fa06d4f.ssl.cf2.rackcdn.com/images/characters/large/2800/Hades.Hercules.webp" });
+        const { id, username, name, profile_pic } = await res.data;
+        setCurrentUser({ id, name, username, profilePic: profile_pic });
     }
 
     useEffect(() => {

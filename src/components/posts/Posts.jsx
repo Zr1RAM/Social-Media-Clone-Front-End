@@ -1,8 +1,9 @@
 //import React from 'react'
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 import Post from '../post/Post';
 import './posts.scss'
 import { makeRequest } from '../../axios';
+import { memo } from 'react';
 
 //temp
 const examplePosts = [
@@ -82,24 +83,41 @@ const examplePosts = [
         profilePic: "https://i.pinimg.com/originals/d8/7b/24/d87b24ebff13b91f74c3b9ab6579e13d.jpg",
         desc: "Every day I fight the urge to become a forest hermit. My soul yearns for hermithood",
         img: "https://pbs.twimg.com/media/GAtccGvacAALSpO?format=jpg&name=large",
+
     },
 ];
 
-const Posts = ({ posts = examplePosts }) => {
+const Posts = ({ posts }) => {
 
-    // const { isLoading, error, data } = useQuery(['posts'], () => {
-    //     makeRequest.get('/posts').then((res) => {
-    //         return res.data;
-    //     })
-    // });
+    console.log(posts);
+    const { isLoading, error, data } = useQuery({
+        queryKey: ['posts'],
+        queryFn: () => {
+            if(!posts) {
+                console.log('should fetch posts');
+                return makeRequest.get('/posts').then((res) => {
+                    console.log(res.data);
+                    //posts = res.data;
+                    return res.data;
+                })
+            } else {
+                console.log("post data from props");
+                return posts;
+            }
+        },
+      });
+      console.log(data);
 
     return (
         <div className='posts'>
-            {posts.map((post) => {
+            {/* {posts.map((post) => {
                 return <Post key={post.id} post={post} />
+            })} */}
+            {error ? <span style={{color: 'red'}}>{`something went wrong.. ${error}`}</span> : isLoading ? <span>loading...</span> : data?.map((post) => {
+                return <Post key={post.id} post={post}/>
             })}
         </div>
     )
 }
 
-export default Posts
+export default Posts;

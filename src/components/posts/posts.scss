@@ -1,5 +1,11 @@
+@import '../../styles/style.scss';
 .posts {
     display: flex;
     flex-direction: column;
     gap: 50px;
+    span {
+        @include themify() {
+            color: themed("textColor");
+        }
+    }
 }
