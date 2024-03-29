@@ -41,6 +41,16 @@
                         }
                     }
                 }
+                button {
+                   position: relative;
+                   top: 10px;
+                   right: 0;
+                   border: none;
+                   background-color: #f0544f;
+                   padding: 5px;
+                   cursor: pointer; 
+                   color: white;
+                }
             }
 
             .content {

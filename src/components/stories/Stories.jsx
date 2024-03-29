@@ -2,6 +2,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '../../context/authContext';
 import './stories.scss'
+import { getProfileImgUrl } from '../../../utilities/util';
 
 const Stories = () => {
 
@@ -43,7 +44,7 @@ const Stories = () => {
     return (
         <div className='stories'>
             <div className="story" key={currentUser.id}>
-                <img src={currentUser.profilePic} alt="" />
+                <img src={getProfileImgUrl(currentUser.profilePic, currentUser.id)} alt="" />
                 <span>{currentUser.name}</span>
                 <button>+</button>
             </div>

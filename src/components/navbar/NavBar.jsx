@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
+import { getProfileImgUrl } from "../../../utilities/util";
 
 const NavBar = () => {
     const { darkMode, toggle } = useContext(DarkModeContext);
@@ -37,7 +38,7 @@ const NavBar = () => {
                 <NotificationsOutlinedIcon />
                 <div className="user">
                     <Link to={`/profile/${currentUser.id}`} >
-                        <img src={currentUser.profilePic} alt="" />
+                        <img src={getProfileImgUrl(currentUser.profilePic, currentUser.id)} alt="" />
                     </Link>
                     <span>{currentUser.name}</span>
                 </div>

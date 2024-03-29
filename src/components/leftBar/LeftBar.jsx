@@ -2,6 +2,7 @@
 import { useContext } from "react"
 import "./leftbar.scss"
 import { AuthContext } from "../../context/authContext"
+import { getProfileImgUrl } from "../../../utilities/util";
 
 const LeftBar = () => {
     const { currentUser } = useContext(AuthContext);
@@ -10,7 +11,7 @@ const LeftBar = () => {
             <div className="container">
                 <div className="menu">
                     <div className="user">
-                        <img src="" alt="" />
+                        <img src={getProfileImgUrl(currentUser.profilePic, currentUser.id)} alt="" />
                         <span>{currentUser.name}</span>
                     </div>
                     <div className="item">

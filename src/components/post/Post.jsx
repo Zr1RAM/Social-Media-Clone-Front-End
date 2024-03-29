@@ -14,6 +14,7 @@ import moment from "moment";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { makeRequest } from "../../axios";
+import { getProfileImgUrl } from "../../../utilities/util";
 
 const baseURL = 'http://localhost:8800/uploads/';
 
@@ -27,6 +28,8 @@ const Post = ({ post }) => {
     const [imageSrc, setImageSrc] = useState("");
 
     const [liked, setLiked] = useState(false); 
+
+    const [togglePostOptions, setTogglePostOptions] = useState(false);
 
     const queryClient = useQueryClient();
 
@@ -56,6 +59,19 @@ const Post = ({ post }) => {
             onSuccess: () => {
                 
                 //queryClient.invalidateQueries(['posts']);
+                //queryClient.invalidateQueries(['post', id]);
+            },
+        }
+    );
+
+    const deleteMutation = useMutation(
+        (postId) => {
+            return makeRequest.delete("/posts/" + postId);
+        },
+        {
+            onSuccess: () => {
+                
+                queryClient.invalidateQueries(['posts']);
                 //queryClient.invalidateQueries(['post', id]);
             },
         }
@@ -103,13 +119,17 @@ const Post = ({ post }) => {
         
 
     }, []);
+
+    const handleDelete = () => {
+        deleteMutation.mutate(id);
+    }
     
     return (
         <div className="post">
             <div className="container">
                 <div className="user">
                     <div className="userInfo">
-                        <img src={profilePic} alt="" />
+                        <img src={getProfileImgUrl(profilePic, userid)} alt="" />
                         <div className="details">
                             <Link to={`/profile/${userid}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 <span className="name">{name}</span>
@@ -117,7 +137,15 @@ const Post = ({ post }) => {
                             <span className="date">{moment(created_at).fromNow()}</span>
                         </div>
                     </div>
-                    <MoreHorizIcon />
+                    <MoreHorizIcon onClick={() => setTogglePostOptions(!togglePostOptions)}/>
+                    {
+                        togglePostOptions &&
+                        (userid == currentUser.id ? (
+                            <button onClick={handleDelete}>delete</button>
+                        ) : (
+                            "Options pending"
+                        ))
+                    }
                 </div>
                 <div className="content">
                     <p>{desc}</p>

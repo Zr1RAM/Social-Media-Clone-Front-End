@@ -4,6 +4,7 @@ import "./share.scss"
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient, } from 'react-query'
 import { makeRequest } from "../../axios";
+import { getProfileImgUrl } from "../../../utilities/util";
 
 const Share = () => {
 
@@ -58,7 +59,7 @@ const Share = () => {
         <div className="container">
         <div className="top">
             <div className="left">
-                <img src={currentUser.profilePic} alt="" />
+                <img src={getProfileImgUrl(currentUser.profilePic, currentUser.id)} alt="" />
                 <input 
                     type="text" 
                     placeholder={`What's on your mind ${currentUser.name}?`} 

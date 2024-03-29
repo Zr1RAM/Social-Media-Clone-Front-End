@@ -18,6 +18,7 @@ import { makeRequest } from "../../axios";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import UpdateModal from "../../components/modal/UpdateModal";
+import { getProfileImgUrl } from "../../../utilities/util";
 
 //temp
 const hadesPosts = [
@@ -86,12 +87,13 @@ const Profile = () => {
             ) : ( <>
             <div className="images">
                 <img
-                    src={data?.cover_pic}
+                    src={getProfileImgUrl(data?.cover_pic, data.id)}
                     alt=""
                     className="cover"
                 />
                 <img
-                    src={data?.profile_pic}
+                    // src={data?.profile_pic}
+                    src={getProfileImgUrl(data?.profile_pic, data.id)}
                     alt=""
                     className="profilePic"
                 />
@@ -152,7 +154,7 @@ const Profile = () => {
                 </div>
             }
             </>)}
-            {openUpdate && <UpdateModal setOpenUpdate = {setOpenUpdate}/>}
+            {openUpdate && <UpdateModal setOpenUpdate = {setOpenUpdate} user={data}/>}
         </div>
     )
 }
